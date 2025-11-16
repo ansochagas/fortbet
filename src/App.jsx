@@ -161,15 +161,15 @@ const App = () => {
 
     // Posições aproximadas da nova arte (percentuais X,Y)
     const defaultPos = {
-      colaborador: [0.33, 0.165],
-      data: [0.52, 0.285],
-      entradas: [0.38, 0.44],
-      comissoes: [0.74, 0.44],
+      colaborador: [0.3275, 0.165],
+      data: [0.5275, 0.2825],
+      entradas: [0.3825, 0.44],
+      comissoes: [0.75, 0.44],
       saidas: [0.38, 0.57],
-      qtd_apostas: [0.74, 0.57],
-      lancamentos: [0.38, 0.70],
-      saldo_final: [0.74, 0.70],
-      saldo_enviar: [0.52, 0.84],
+      qtd_apostas: [0.7525, 0.57],
+      lancamentos: [0.385, 0.70],
+      saldo_final: [0.7525, 0.70],
+      saldo_enviar: [0.525, 0.8375],
     };
     const POS = defaultPos;
     const pos = (key) => {
@@ -244,6 +244,9 @@ const App = () => {
 
     const parcialCalc = totals.entradas - totals.saidas - totals.comissoes;
     const liquidoCalc = parcialCalc + totals.lancamentos - totals.cartoes;
+    const qtdCambistas = Array.isArray(gerente.cambistas)
+      ? gerente.cambistas.length
+      : 0;
 
     const base = Math.max(canvas.width, canvas.height);
     const fontSm = Math.round(base * 0.030);
@@ -251,15 +254,16 @@ const App = () => {
     const fontLg = Math.round(base * 0.065);
 
     const defaultPosG = {
-      supervisor: [0.23, 0.155],
-      data: [0.20, 0.285],
-      entradas: [0.38, 0.44],
-      comissoes: [0.74, 0.44],
+      supervisor: [0.2225, 0.155],
+      data: [0.195, 0.285],
+      qtd_cambistas: [0.8675, 0.28],
+      entradas: [0.3725, 0.44],
+      comissoes: [0.795, 0.44],
       saidas: [0.38, 0.57],
-      qtd_apostas: [0.74, 0.57],
-      lancamentos: [0.38, 0.70],
-      saldo_final: [0.74, 0.70],
-      saldo_enviar: [0.52, 0.84],
+      qtd_apostas: [0.8125, 0.57],
+      lancamentos: [0.4075, 0.70],
+      saldo_final: [0.79, 0.695],
+      saldo_enviar: [0.525, 0.84],
     };
     const POSG = defaultPosG;
     const posG = (key) => {
@@ -277,6 +281,7 @@ const App = () => {
 
     draw(gerente.nome || "Supervisor", posG("supervisor"), "left", fontMd, "#000");
     draw(gerente.periodo || "", posG("data"), "left", Math.round(fontSm * 0.9), "#000");
+    draw(String(qtdCambistas), posG("qtd_cambistas"), "center", Math.round(fontSm * 0.9), "#000");
     draw(fmt(totals.entradas), posG("entradas"), "center");
     draw(fmt(totals.comissoes), posG("comissoes"), "center");
     draw(fmt(totals.saidas), posG("saidas"), "center");
@@ -566,6 +571,14 @@ const parsePDFTextStable = (text) => {
       .replace(/[\u00A0\u2007\u202F]/g, " ")
       .replace(/\s+/g, " ")
       .trim();
+  const sanitizeGerenteName = (value) =>
+    (value || "").replace(/^\s*\d+\s*/, "").trim();
+  const shouldIgnoreHeader = (value) => {
+    const norm = (value || "").toLowerCase();
+    if (!norm) return true;
+    if (/\bapostas\b/.test(norm) && /\bentradas\b/.test(norm)) return true;
+    return false;
+  };
 
   const textNorm = normalizeText(text);
   const LETTER_CLASS = "A-Za-z\\u00C0-\\u017F";
@@ -579,9 +592,12 @@ const parsePDFTextStable = (text) => {
 
   const headers = [];
   for (const match of textNorm.matchAll(headerRe)) {
+    const nomeBruto = (match[1] || "").trim();
+    const nome = sanitizeGerenteName(nomeBruto);
+    if (shouldIgnoreHeader(nome)) continue;
     headers.push({
       index: match.index ?? 0,
-      nome: (match[1] || "").trim(),
+      nome,
       comissao: (match[2] || "0,00").replace(/\s+/g, ""),
     });
   }
@@ -608,7 +624,12 @@ const parsePDFTextStable = (text) => {
     let rowMatch;
     while ((rowMatch = rowRe.exec(section)) !== null) {
       const nome = (rowMatch[1] || "").trim();
-      if (!nome || /^(Subtotal|Total)$/i.test(nome)) continue;
+      if (
+        !nome ||
+        /^(Subtotal|Total)$/i.test(nome) ||
+        shouldIgnoreHeader(nome)
+      )
+        continue;
 
       cambistas.push({
         nome,
