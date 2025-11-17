@@ -254,7 +254,7 @@ const App = () => {
     const fontLg = Math.round(base * 0.065);
 
     const defaultPosG = {
-      supervisor: [0.2225, 0.155],
+      supervisor: [0.16, 0.155],
       data: [0.195, 0.285],
       qtd_cambistas: [0.8675, 0.28],
       entradas: [0.3725, 0.44],
@@ -279,7 +279,7 @@ const App = () => {
       ctx.fillText(text, p.x, p.y);
     };
 
-    draw(gerente.nome || "Supervisor", posG("supervisor"), "left", fontMd, "#000");
+    draw(gerente.nome || "Supervisor", posG("supervisor"), "left", Math.round(fontMd * 0.9), "#000");
     draw(gerente.periodo || "", posG("data"), "left", Math.round(fontSm * 0.9), "#000");
     draw(String(qtdCambistas), posG("qtd_cambistas"), "center", Math.round(fontSm * 0.9), "#000");
     draw(fmt(totals.entradas), posG("entradas"), "center");
