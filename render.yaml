@@ -37,8 +37,9 @@ services:
       - key: COMERCIAL_AREA_OWNERS_JSON
         sync: false
 
-  - type: static
+  - type: web
     name: fortbet-dashboard
+    runtime: static
     autoDeploy: true
     buildCommand: npm ci && npm run build
     staticPublishPath: dist
