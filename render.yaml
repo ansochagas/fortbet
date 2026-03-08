@@ -1,0 +1,57 @@
+services:
+  - type: web
+    name: fortbet-comercial-api
+    runtime: node
+    plan: starter
+    autoDeploy: true
+    buildCommand: npm ci
+    startCommand: npm run comercial:server
+    healthCheckPath: /api/comercial/health
+    disk:
+      name: comercial-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: COMERCIAL_API_BASE
+        value: /api/comercial
+      - key: COMERCIAL_DB_PATH
+        value: /var/data/comercial-db.json
+      - key: COMERCIAL_SYNC_INTERVAL_MINUTES
+        value: "30"
+      - key: COMERCIAL_SYNC_TIMEZONE
+        value: America/Fortaleza
+      - key: COMERCIAL_SYNC_ON_STARTUP
+        value: "1"
+      - key: MONACO_BASE_URL
+        value: https://monacoloterias.ddns.net
+      - key: COMERCIAL_CORS_ORIGIN
+        sync: false
+      - key: COMERCIAL_API_TOKEN
+        sync: false
+      - key: MONACO_LOGIN
+        sync: false
+      - key: MONACO_SENHA
+        sync: false
+      - key: COMERCIAL_AREA_OWNERS_JSON
+        sync: false
+
+  - type: static
+    name: fortbet-dashboard
+    autoDeploy: true
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: VITE_COMERCIAL_API_URL
+        sync: false
+      - key: VITE_COMERCIAL_API_TOKEN
+        sync: false
+      - key: VITE_ENABLE_DEBUG
+        value: "0"

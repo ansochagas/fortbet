@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "comercial:sync": "powershell -ExecutionPolicy Bypass -File ./scripts/Sync-ComercialOnline.ps1",
+    "comercial:server": "node ./server/comercial-backend.mjs"
   },
   "dependencies": {
     "react": "^18.2.0",
