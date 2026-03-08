@@ -97,6 +97,39 @@ const parseOwnerMap = (raw) => {
 
 const uniqueStrings = (items) => Array.from(new Set((items || []).filter(Boolean)));
 
+const isIsoDay = (value) => /^\d{4}-\d{2}-\d{2}$/.test(String(value || ""));
+
+const normalizeRevenueByDay = (raw) => {
+  if (!raw || typeof raw !== "object") return {};
+  const safe = {};
+  Object.entries(raw).forEach(([day, value]) => {
+    if (!isIsoDay(day)) return;
+    const parsed = Number(value || 0);
+    safe[day] = Number.isFinite(parsed) ? parsed : 0;
+  });
+  return safe;
+};
+
+const buildRevenueByDayFromEntry = (entry) => {
+  const fromDailyField = normalizeRevenueByDay(entry?.faturamentoPorDia);
+  if (Object.keys(fromDailyField).length > 0) {
+    return fromDailyField;
+  }
+
+  const snapshotDate = String(entry?.snapshotDate || "").trim();
+  if (!isIsoDay(snapshotDate)) return {};
+
+  const fallback = Number(entry?.faturamentoOnlineDia ?? entry?.faturamentoRealizado ?? 0);
+  if (!Number.isFinite(fallback)) return {};
+  return { [snapshotDate]: fallback };
+};
+
+const sumRevenueByDay = (dailyRevenue) =>
+  Object.values(normalizeRevenueByDay(dailyRevenue)).reduce(
+    (sum, value) => sum + Number(value || 0),
+    0
+  );
+
 const buildKey = (areaToken, vendedor) => {
   const cleanArea = String(areaToken || "").trim();
   const cleanName = normalizeName(vendedor);
@@ -280,6 +313,10 @@ export const applyOnlineSnapshotToState = ({
       faturamentoRealizado: 0,
     };
 
+    const revenueByDay = buildRevenueByDayFromEntry(previous);
+    revenueByDay[snapshotDate] = Number(stats.soldTotal || 0);
+    const faturamentoAcumuladoMes = sumRevenueByDay(revenueByDay);
+
     importedByCollaborator.set(collaboratorId, {
       ...previous,
       collaboratorId,
@@ -290,7 +327,8 @@ export const applyOnlineSnapshotToState = ({
       cambistasCount: stats.activeKeys.size,
       novosCambistasAuto: monthlyNewByCollaborator.get(collaboratorId) || 0,
       faturamentoOnlineDia: Number(stats.soldTotal || 0),
-      faturamentoRealizado: Number(stats.soldTotal || 0),
+      faturamentoPorDia: revenueByDay,
+      faturamentoRealizado: faturamentoAcumuladoMes,
       source,
       snapshotDate,
       importedAt: fetchedAt,
