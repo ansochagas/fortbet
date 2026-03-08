@@ -56,7 +56,7 @@ npm run dev
 - `MONACO_BASE_URL=https://monacoloterias.ddns.net`
 - `MONACO_LOGIN=<seu-login>`
 - `MONACO_SENHA=<sua-senha>`
-- `COMERCIAL_AREA_OWNERS_JSON={"00":"Bruninho","00 Bruninho":"Bruninho","00 Bruno":"Bruno","02":"Dije","02 Dije":"Dije","03":"Anderson","04":"Neutel","04 Chefe":"Neutel","04 Neutel":"Neutel","06":"Victor","06 Torugo":"Victor","07":"Jarbas","07 Professor":"Jarbas","07 Jarbas":"Jarbas"}`
+- `COMERCIAL_AREA_OWNERS_JSON={"00":"Bruninho","00 Bruninho":"Bruninho","00 Bruno":"Bruninho","02":"Dije","02 Dije":"Dije","03":"Anderson","04":"Neutel","04 Chefe":"Neutel","04 Neutel":"Neutel","06":"Victor","06 Torugo":"Victor","07":"Jarbas","07 Professor":"Jarbas","07 Jarbas":"Jarbas"}`
 
 ## Producao
 1. Hospede backend e frontend no mesmo dominio (ou ajuste CORS).

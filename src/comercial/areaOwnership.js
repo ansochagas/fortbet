@@ -3,7 +3,7 @@ import { normalizeName } from "./domain";
 export const DEFAULT_AREA_OWNERS = Object.freeze({
   "00": "Bruninho",
   "00 Bruninho": "Bruninho",
-  "00 Bruno": "Bruno",
+  "00 Bruno": "Bruninho",
   "02": "Dije",
   "02 Dije": "Dije",
   "03": "Anderson",

@@ -8,6 +8,7 @@ import { normalizeName, toSlug } from "./domain";
 
 export const COLLABORATOR_ID_ALIASES = Object.freeze({
   "col-torugo": "col-victor",
+  "col-bruno": "col-bruninho",
   "col-chefe": "col-neutel",
   "col-professor": "col-jarbas",
 });
@@ -20,13 +21,7 @@ export const COMMERCIAL_COLLABORATORS = [
     id: "col-bruninho",
     name: "Bruninho",
     photo: brunoPhoto,
-    aliases: ["BRUNINHO", "00 BRUNINHO"],
-  },
-  {
-    id: "col-bruno",
-    name: "Bruno",
-    photo: brunoPhoto,
-    aliases: ["BRUNO", "00 BRUNO"],
+    aliases: ["BRUNINHO", "BRUNO", "00 BRUNINHO", "00 BRUNO"],
   },
   {
     id: "col-dije",

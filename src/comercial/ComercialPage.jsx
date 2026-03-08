@@ -538,42 +538,6 @@ export const ComercialPage = () => {
           lastUpdated={lastUpdated}
         />
 
-        <FiltersBar
-          monthKey={monthKey}
-          onMonthChange={(value) => setMonthKey(value || formatMonthKey())}
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
-          search={search}
-          onSearchChange={setSearch}
-          groupFilter={groupFilter}
-          onGroupFilterChange={setGroupFilter}
-          groupOptions={groupOptions}
-          sortKey={sortKey}
-          onSortKeyChange={setSortKey}
-          canManage={canManage}
-          onImportClick={() => fileInputRef.current?.click()}
-          onImportOnlineJsonClick={() => onlineJsonInputRef.current?.click()}
-          onSyncOnlineClick={handleSyncLocalSnapshot}
-          onOpenSettings={openSettings}
-          onlineSyncBusy={importState.busy}
-          currentRole={currentUser?.papel || ""}
-          onRoleChange={handleRoleChange}
-          roleOptions={roleOptions}
-        />
-
-        {importState.message && (
-          <div className={`rounded-3xl border px-5 py-4 text-sm font-semibold ${messageClass}`}>
-            <div className="flex items-center gap-3">
-              {importState.busy ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Sparkles className="h-4 w-4" />
-              )}
-              {importState.message}
-            </div>
-          </div>
-        )}
-
         <TeamSummary summary={dashboard.summary} viewMode={viewMode} />
 
         <section className="rounded-[2rem] border border-slate-200 bg-white/85 p-5 shadow-xl shadow-slate-900/5 backdrop-blur-xl">
@@ -611,6 +575,42 @@ export const ComercialPage = () => {
             </div>
           )}
         </section>
+
+        {importState.message && (
+          <div className={`rounded-3xl border px-5 py-4 text-sm font-semibold ${messageClass}`}>
+            <div className="flex items-center gap-3">
+              {importState.busy ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Sparkles className="h-4 w-4" />
+              )}
+              {importState.message}
+            </div>
+          </div>
+        )}
+
+        <FiltersBar
+          monthKey={monthKey}
+          onMonthChange={(value) => setMonthKey(value || formatMonthKey())}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          search={search}
+          onSearchChange={setSearch}
+          groupFilter={groupFilter}
+          onGroupFilterChange={setGroupFilter}
+          groupOptions={groupOptions}
+          sortKey={sortKey}
+          onSortKeyChange={setSortKey}
+          canManage={canManage}
+          onImportClick={() => fileInputRef.current?.click()}
+          onImportOnlineJsonClick={() => onlineJsonInputRef.current?.click()}
+          onSyncOnlineClick={handleSyncLocalSnapshot}
+          onOpenSettings={openSettings}
+          onlineSyncBusy={importState.busy}
+          currentRole={currentUser?.papel || ""}
+          onRoleChange={handleRoleChange}
+          roleOptions={roleOptions}
+        />
 
         <section className="flex flex-wrap items-center justify-center gap-3 rounded-[2rem] border border-slate-200 bg-white/80 p-5 shadow-xl shadow-slate-900/5 backdrop-blur-xl">
           <button

@@ -94,7 +94,7 @@ export const HeroMetas = ({ monthLabel, totals, viewMode, lastUpdated, actions }
         <div className="mb-8 flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
           <div className="max-w-3xl">
             <p className="text-base font-bold uppercase tracking-[0.18em] text-amber-200/90 md:text-lg">
-              Monitoramento Comercial FortBet
+              Monitoramento Comercial MONACO LOTERIAS
             </p>
           </div>
           <div className="flex flex-col items-start gap-3 lg:items-end">

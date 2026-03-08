@@ -1,7 +1,7 @@
 const DEFAULT_AREA_OWNERS = Object.freeze({
   "00": "Bruninho",
   "00 Bruninho": "Bruninho",
-  "00 Bruno": "Bruno",
+  "00 Bruno": "Bruninho",
   "02": "Dije",
   "02 Dije": "Dije",
   "03": "Anderson",
@@ -17,7 +17,7 @@ const DEFAULT_AREA_OWNERS = Object.freeze({
 
 const OWNER_TO_COLLABORATOR = Object.freeze({
   bruninho: { id: "col-bruninho", name: "Bruninho" },
-  bruno: { id: "col-bruno", name: "Bruno" },
+  bruno: { id: "col-bruninho", name: "Bruninho" },
   dije: { id: "col-dije", name: "Dije" },
   anderson: { id: "col-anderson", name: "Anderson" },
   chefe: { id: "col-neutel", name: "Neutel" },
@@ -31,6 +31,7 @@ const OWNER_TO_COLLABORATOR = Object.freeze({
 
 const COLLABORATOR_ID_ALIASES = Object.freeze({
   "col-torugo": "col-victor",
+  "col-bruno": "col-bruninho",
   "col-chefe": "col-neutel",
   "col-professor": "col-jarbas",
 });
@@ -41,7 +42,6 @@ const canonicalCollaboratorId = (value) =>
 const ACTIVE_COLLABORATOR_IDS = Object.freeze(
   new Set([
     "col-bruninho",
-    "col-bruno",
     "col-dije",
     "col-anderson",
     "col-neutel",
