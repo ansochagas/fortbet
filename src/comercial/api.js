@@ -7,9 +7,9 @@ const STORAGE_KEYS = {
 };
 
 const API_BASE =
-  typeof window !== "undefined" ? import.meta?.env?.VITE_COMERCIAL_API_URL || "" : "";
+  typeof window !== "undefined" ? import.meta.env.VITE_COMERCIAL_API_URL || "" : "";
 const API_TOKEN =
-  typeof window !== "undefined" ? import.meta?.env?.VITE_COMERCIAL_API_TOKEN || "" : "";
+  typeof window !== "undefined" ? import.meta.env.VITE_COMERCIAL_API_TOKEN || "" : "";
 
 const readLocal = (key) => {
   if (typeof window === "undefined") return [];

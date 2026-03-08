@@ -44,9 +44,9 @@ export const clearSnapshotLocal = async (key) => {
 // Facade para futuro backend. Hoje usa apenas localStorage.
 const BACKEND_KEY = "fortbet_snapshot_backend";
 const SNAPSHOT_URL =
-  typeof window !== "undefined" ? import.meta?.env?.VITE_SNAPSHOT_URL : null;
+  typeof window !== "undefined" ? import.meta.env.VITE_SNAPSHOT_URL : null;
 const SNAPSHOT_TOKEN =
-  typeof window !== "undefined" ? import.meta?.env?.VITE_SNAPSHOT_TOKEN : null;
+  typeof window !== "undefined" ? import.meta.env.VITE_SNAPSHOT_TOKEN : null;
 const SNAPSHOT_IS_LOCAL_BACKEND = SNAPSHOT_URL && SNAPSHOT_URL.startsWith("local:");
 const SNAPSHOT_LOCAL_KEY = SNAPSHOT_IS_LOCAL_BACKEND
   ? `fortbet_snapshot_${SNAPSHOT_URL.replace(/[^a-z0-9_-]/gi, "_")}`
