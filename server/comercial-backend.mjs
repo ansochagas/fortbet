@@ -95,6 +95,33 @@ const toNumber = (value) => {
   return Number.isFinite(parsed) ? parsed : 0;
 };
 
+const isIsoDay = (value) => /^\d{4}-\d{2}-\d{2}$/.test(String(value || ""));
+
+const toIsoDateInZone = (date = new Date(), timeZone = "America/Fortaleza") => {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+
+  const year = parts.find((part) => part.type === "year")?.value || "1970";
+  const month = parts.find((part) => part.type === "month")?.value || "01";
+  const day = parts.find((part) => part.type === "day")?.value || "01";
+  return `${year}-${month}-${day}`;
+};
+
+const monthDaysUntil = (todayIso) => {
+  if (!isIsoDay(todayIso)) return [];
+  const [year, month, dayRaw] = String(todayIso).split("-");
+  const day = Number(dayRaw) || 1;
+  const days = [];
+  for (let current = 1; current <= day; current += 1) {
+    days.push(`${year}-${month}-${String(current).padStart(2, "0")}`);
+  }
+  return days;
+};
+
 const withYearMonth = (entries, year, month) =>
   (Array.isArray(entries) ? entries : []).map((entry) => ({
     ...entry,
@@ -145,30 +172,55 @@ const runSync = async (trigger) => {
       if (!login || !senha) {
         throw new Error("Credenciais MONACO_LOGIN e MONACO_SENHA nao configuradas.");
       }
+      const todayIso = toIsoDateInZone(new Date(), syncTimeZone);
+      const currentMonthKey = todayIso.slice(0, 7);
+      const syncedMonthDays = new Set(
+        (state.onlineSnapshots || [])
+          .filter(
+            (entry) =>
+              entry?.source === "monaco-auto-sync" &&
+              String(entry?.monthKey || "") === currentMonthKey &&
+              isIsoDay(entry?.snapshotDate)
+          )
+          .map((entry) => String(entry.snapshotDate))
+      );
+      const missingMonthDays = monthDaysUntil(todayIso).filter((day) => !syncedMonthDays.has(day));
+      const syncDays = Array.from(new Set([...missingMonthDays, todayIso])).sort();
 
-      const fetched = await fetchMonacoCaixaVendedor({
-        baseUrl,
-        login,
-        senha,
-        snapshotDate: "",
-        timeZone: syncTimeZone,
-      });
+      let summary = null;
+      for (const syncDay of syncDays) {
+        const fetched = await fetchMonacoCaixaVendedor({
+          baseUrl,
+          login,
+          senha,
+          snapshotDate: syncDay,
+          timeZone: syncTimeZone,
+        });
 
-      const summary = applyOnlineSnapshotToState({
-        state,
-        rows: fetched.rows,
-        snapshotDate: fetched.snapshotDate,
-        fetchedAt: fetched.fetchedAt,
-        areaOwnersRaw,
-        source: "monaco-auto-sync",
-      });
+        summary = applyOnlineSnapshotToState({
+          state,
+          rows: fetched.rows,
+          snapshotDate: fetched.snapshotDate,
+          fetchedAt: fetched.fetchedAt,
+          areaOwnersRaw,
+          source: "monaco-auto-sync",
+        });
+      }
+
+      if (!summary) {
+        throw new Error("Nenhum dia valido foi sincronizado.");
+      }
 
       state.sync.running = false;
       state.sync.lastSuccessAt = new Date().toISOString();
       state.sync.lastError = "";
-      state.sync.lastStats = summary;
+      state.sync.lastStats = {
+        ...summary,
+        syncedDays: syncDays.length,
+        backfilledDays: Math.max(syncDays.length - 1, 0),
+      };
       saveState(dbPath, state);
-      return summary;
+      return state.sync.lastStats;
     } catch (error) {
       state.sync.running = false;
       state.sync.lastError = error?.message || "Falha desconhecida na sincronizacao.";

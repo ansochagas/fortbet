@@ -7,7 +7,8 @@ Centralizar os dados do painel comercial em backend unico, com sincronizacao aut
 1. O backend (`server/comercial-backend.mjs`) roda com banco JSON central.
 2. A cada `COMERCIAL_SYNC_INTERVAL_MINUTES` (padrao `30`), ele:
    - faz login no Monaco,
-   - consulta `CaixaVendedor`,
+   - consulta `CaixaVendedor` do dia atual,
+   - faz backfill automatico dos dias faltantes do mes (dia 1 ate hoje),
    - atualiza faturamento realizado por colaborador,
    - detecta novos cambistas pela chave `area + nome normalizado`,
    - salva historico de `firstSeen`.
